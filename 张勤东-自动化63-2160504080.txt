@@ -1,0 +1,403 @@
+µÚÒ»Ìâ´úÂë
+[pic,map]=imread('lena.bmp');
+t=cell(14,1);
+t{1,1}=ind2gray(pic,map);
+t{2,1}= imnoise(t{1,1},'gaussian',0,0.0016); %·½²îÎª100
+
+t{3,1}=imgaussfilt(t{2,1},1);
+t{4,1}=imgaussfilt(t{2,1},4);
+
+t{5,1}=medfilt2(t{2,1},[5,5]);
+t{6,1}=medfilt2(t{2,1},[15,15]);
+
+a1=fspecial('average',5);
+a2=fspecial('average',15);
+t{7,1}=imfilter(t{2,1},a1);
+t{8,1}=imfilter(t{2,1},a2);
+
+q=round(mean(mean(t{2,1})));
+t{9,1}=uint8(ones(516,516));
+t{9,1}=t{9,1}*q;
+for i=1:512
+    for j=1:512
+        t{9,1}(i+2,j+2)=t{2,1}(i,j);
+    end
+end
+
+for i=3:514
+    for j=3:514
+        sxy(1:5,1:5)=t{9,1}(i-2:i+2,j-2:j+2);
+        jihe=1;
+        xiebo=0;
+        for ii=1:5
+            for jj=1:5
+                jihe=jihe*double(sxy(ii,jj));
+                xiebo=xiebo+(1/double(sxy(ii,jj)));
+            end
+        end
+        t{10,1}(i-2,j-2)=jihe^(1/25);
+        t{11,1}(i-2,j-2)=25/xiebo;
+        t{12,1}(i-2,j-2)=max(max(sxy));
+        t{13,1}(i-2,j-2)=min(min(sxy));
+        t{14,1}(i-2,j-2)=(0.5*t{12,1}(i-2,j-2)+0.5*t{13,1}(i-2,j-2));
+    end
+end
+
+figure(1)
+subplot(1,2,1)
+imshow(uint8(t{1,1}))
+title('Ô­Í¼Ïñ')
+subplot(1,2,2)
+imshow(uint8(t{2,1}))
+title('ÍË»¯Í¼Ïñ')
+
+for k=3:14
+    figure(k)
+    subplot(1,2,1)
+    imshow(uint8(t{2,1}))
+    title('ÍË»¯Í¼Ïñ')
+    subplot(1,2,2)
+    imshow(uint8(t{k,1}))
+    title('»Ö¸´Í¼Ïñ')
+
+end
+
+
+µÚ¶þÌâ´úÂë
+¼Ó½·ÑÎÔëÉù
+[pic,map]=imread('lena.bmp');
+t=cell(16,1);
+t{1,1}=ind2gray(pic,map);
+t{2,1}= imnoise(t{1,1},'salt & pepper',0.1);
+
+
+
+t{3,1}=imgaussfilt(t{2,1},1);
+t{4,1}=imgaussfilt(t{2,1},4);
+
+t{5,1}=medfilt2(t{2,1},[5,5]);
+t{6,1}=medfilt2(t{2,1},[15,15]);
+
+a1=fspecial('average',5);
+a2=fspecial('average',15);
+t{7,1}=imfilter(t{2,1},a1);
+t{8,1}=imfilter(t{2,1},a2);
+
+
+q=round(mean(mean(t{2,1})));
+t{9,1}=uint8(ones(516,516));
+t{9,1}=t{9,1}*q;
+for i=1:512
+    for j=1:512
+        t{9,1}(i+2,j+2)=t{2,1}(i,j);
+    end
+end
+
+q1=1.5;
+q2=-1.5;
+
+for i=3:514
+    for j=3:514
+        sxy(1:5,1:5)=t{9,1}(i-2:i+2,j-2:j+2);
+        jihe=1;
+        xiebo=0;
+        nxb111=0;
+        nxb112=0;
+        nxb121=0;
+        nxb122=0;
+        for ii=1:5
+            for jj=1:5
+                jihe=jihe*double(sxy(ii,jj));
+                xiebo=xiebo+(1/double(sxy(ii,jj)));
+                nxb111=nxb111+double(sxy(ii,jj))^(q1+1);
+                nxb112=nxb112+double(sxy(ii,jj))^q1;
+                nxb121=nxb121+double(sxy(ii,jj))^(q2+1);
+                nxb122=nxb122+double(sxy(ii,jj))^q2;
+            end
+        end
+        t{10,1}(i-2,j-2)=jihe^(1/25);
+        t{11,1}(i-2,j-2)=25/xiebo;
+        t{12,1}(i-2,j-2)=max(max(sxy));
+        t{13,1}(i-2,j-2)=min(min(sxy));
+        t{14,1}(i-2,j-2)=(0.5*t{12,1}(i-2,j-2)+0.5*t{13,1}(i-2,j-2));
+        t{15,1}(i-2,j-2)=nxb111/nxb112;
+        t{16,1}(i-2,j-2)=nxb121/nxb122;
+    end
+end
+
+figure(1)
+subplot(1,2,1)
+imshow(uint8(t{1,1}))
+title('Ô­Í¼Ïñ')
+subplot(1,2,2)
+imshow(uint8(t{2,1}))
+title('ÍË»¯Í¼Ïñ')
+
+for k=3:16
+    figure(k)
+    subplot(1,2,1)
+    imshow(uint8(t{2,1}))
+    title('ÍË»¯Í¼Ïñ')
+    subplot(1,2,2)
+    imshow(uint8(t{k,1}))
+    title('»Ö¸´Í¼Ïñ')
+
+end
+
+¼ÓÑÎÔëÉù´úÂë
+salt=rand(512);
+for i=1:512
+    for j=1:512
+        if salt(i,j)>=0.9
+            salt(i,j)=1;
+        else
+            salt(i,j)=0;
+        end
+    end
+end
+
+salt=uint8(255*salt);
+
+[pic,map]=imread('lena.bmp');
+t=cell(16,1);
+t{1,1}=ind2gray(pic,map);
+t{2,1}= t{1,1}+salt;
+
+t{3,1}=imgaussfilt(t{2,1},1);
+t{4,1}=imgaussfilt(t{2,1},4);
+
+t{5,1}=medfilt2(t{2,1},[5,5]);
+t{6,1}=medfilt2(t{2,1},[15,15]);
+
+a1=fspecial('average',5);
+a2=fspecial('average',15);
+t{7,1}=imfilter(t{2,1},a1);
+t{8,1}=imfilter(t{2,1},a2);
+
+q=round(mean(mean(t{2,1})));
+t{9,1}=uint8(ones(516,516));
+t{9,1}=t{9,1}*q;
+for i=1:512
+    for j=1:512
+        t{9,1}(i+2,j+2)=t{2,1}(i,j);
+    end
+end
+
+q1=1.5;
+q2=-1.5;
+
+for i=3:514
+    for j=3:514
+        sxy(1:5,1:5)=t{9,1}(i-2:i+2,j-2:j+2);
+        jihe=1;
+        xiebo=0;
+        nxb111=0;
+        nxb112=0;
+        nxb121=0;
+        nxb122=0;
+        for ii=1:5
+            for jj=1:5
+                jihe=jihe*double(sxy(ii,jj));
+                xiebo=xiebo+(1/double(sxy(ii,jj)));
+                nxb111=nxb111+double(sxy(ii,jj))^(q1+1);
+                nxb112=nxb112+double(sxy(ii,jj))^q1;
+                nxb121=nxb121+double(sxy(ii,jj))^(q2+1);
+                nxb122=nxb122+double(sxy(ii,jj))^q2;
+            end
+        end
+        t{10,1}(i-2,j-2)=jihe^(1/25);
+        t{11,1}(i-2,j-2)=25/xiebo;
+        t{12,1}(i-2,j-2)=max(max(sxy));
+        t{13,1}(i-2,j-2)=min(min(sxy));
+        t{14,1}(i-2,j-2)=(0.5*t{12,1}(i-2,j-2)+0.5*t{13,1}(i-2,j-2));
+        t{15,1}(i-2,j-2)=nxb111/nxb112;
+        t{16,1}(i-2,j-2)=nxb121/nxb122;
+    end
+end
+
+figure(1)
+subplot(1,2,1)
+imshow(uint8(t{1,1}))
+title('Ô­Í¼Ïñ')
+subplot(1,2,2)
+imshow(uint8(t{2,1}))
+title('ÍË»¯Í¼Ïñ')
+
+for k=3:16
+    figure(k)
+    subplot(1,2,1)
+    imshow(uint8(t{2,1}))
+    title('ÍË»¯Í¼Ïñ')
+    subplot(1,2,2)
+    imshow(uint8(t{k,1}))
+    title('»Ö¸´Í¼Ïñ')
+end
+
+¼Ó½·ÔëÉù´úÂë
+salt=rand(512);
+for i=1:512
+    for j=1:512
+        if salt(i,j)>=0.9
+            salt(i,j)=1;
+        else
+            salt(i,j)=0;
+        end
+    end
+end
+
+salt=uint8(255*salt);
+
+[pic,map]=imread('lena.bmp');
+t=cell(16,1);
+t{1,1}=ind2gray(pic,map);
+t{2,1}= t{1,1}-salt;
+
+t{3,1}=imgaussfilt(t{2,1},1);
+t{4,1}=imgaussfilt(t{2,1},4);
+
+t{5,1}=medfilt2(t{2,1},[5,5]);
+t{6,1}=medfilt2(t{2,1},[15,15]);
+
+a1=fspecial('average',5);
+a2=fspecial('average',15);
+t{7,1}=imfilter(t{2,1},a1);
+t{8,1}=imfilter(t{2,1},a2);
+
+q=round(mean(mean(t{2,1})));
+t{9,1}=uint8(ones(516,516));
+t{9,1}=t{9,1}*q;
+for i=1:512
+    for j=1:512
+        t{9,1}(i+2,j+2)=t{2,1}(i,j);
+    end
+end
+
+q1=1.5;
+q2=-1.5;
+
+for i=3:514
+    for j=3:514
+        sxy(1:5,1:5)=t{9,1}(i-2:i+2,j-2:j+2);
+        jihe=1;
+        xiebo=0;
+        nxb111=0;
+        nxb112=0;
+        nxb121=0;
+        nxb122=0;
+        for ii=1:5
+            for jj=1:5
+                jihe=jihe*double(sxy(ii,jj));
+                xiebo=xiebo+(1/double(sxy(ii,jj)));
+                nxb111=nxb111+double(sxy(ii,jj))^(q1+1);
+                nxb112=nxb112+double(sxy(ii,jj))^q1;
+                nxb121=nxb121+double(sxy(ii,jj))^(q2+1);
+                nxb122=nxb122+double(sxy(ii,jj))^q2;
+            end
+        end
+        t{10,1}(i-2,j-2)=jihe^(1/25);
+        t{11,1}(i-2,j-2)=25/xiebo;
+        t{12,1}(i-2,j-2)=max(max(sxy));
+        t{13,1}(i-2,j-2)=min(min(sxy));
+        t{14,1}(i-2,j-2)=(0.5*t{12,1}(i-2,j-2)+0.5*t{13,1}(i-2,j-2));
+        t{15,1}(i-2,j-2)=nxb111/nxb112;
+        t{16,1}(i-2,j-2)=nxb121/nxb122;
+    end
+end
+
+figure(1)
+subplot(1,2,1)
+imshow(uint8(t{1,1}))
+title('Ô­Í¼Ïñ')
+subplot(1,2,2)
+imshow(uint8(t{2,1}))
+title('ÍË»¯Í¼Ïñ')
+
+for k=3:16
+    figure(k)
+    subplot(1,2,1)
+    imshow(uint8(t{2,1}))
+    title('ÍË»¯Í¼Ïñ')
+    subplot(1,2,2)
+    imshow(uint8(t{k,1}))
+    title('»Ö¸´Í¼Ïñ')
+end
+
+
+µÚÈýÌâ´úÂë
+[pic,map]=imread('lena.bmp');
+t=cell(18,1);
+t{1,1}=ind2gray(pic,map);
+
+t{2,1}=fftshift(fft2(t{1,1}));
+[x,y]=size(t{2,1});
+
+ab=0.1;
+for u=1:x
+    for v=1:y
+        t{3,1}(u,v)=sin(pi*ab*(u+v))*exp(-ab*(u+v)*pi*1j)/(pi*ab*(u+v));
+
+    end
+end
+
+% H = fspecial('motion',20,135); %Ä£ºýº¯Êý£¬¿É´úÌæ8-14ÐÐ
+% t{3,1}=fftshift(fft2(H,512,512)); %Ä£ºýº¯Êý£¬¿É´úÌæ8-14ÐÐ
+
+t{4,1}=t{2,1}.*t{3,1};
+t{5,1}=abs(ifft2(fftshift(t{4,1})));
+c=max(max(t{5,1}));
+d=min(min(t{5,1}));
+t{6,1}=uint8(255*(t{5,1}-d)/(c-d));
+
+t{7,1}= imnoise(t{6,1},'gaussian',0,0.00016);
+t{8,1}=fftshift(fft2(t{7,1}));
+
+k=0.04;
+t{9,1}=(1./t{3,1}).*((abs(t{3,1}).^2)./(abs(t{3,1}).^2.+k)).*t{8,1};
+
+t{10,1}=abs(ifft2(fftshift(t{9,1})));
+e=max(max(t{10,1}));
+f=min(min(t{10,1}));
+t{11,1}=uint8(255*(t{10,1}-f)/(e-f));
+
+p1=[0,-1,0;-1,4,-1;0,-1,0];
+p=fftshift(fft2(p1,512,512));
+
+gama1=0;
+gama2=0.5;
+gama=0.2;
+r=0;
+n2=10*512*512;
+for ss=1:500
+    t{12,1}=conj(t{3,1}).*t{8,1}./((abs(t{3,1})).^2.+gama*((abs(p)).^2));
+    t{13,1}=t{12,1}.*t{3,1};
+    t{14,1}=abs(ifft2(fftshift(t{13,1})));
+    cc=max(max(t{14,1}));
+    dd=min(min(t{14,1}));
+    t{15,1}=uint8(255*(t{14,1}-dd)/(cc-dd));
+    t{16,1}=abs(t{7,1}-t{15,1});
+    r=sum(sum(t{16,1}.^2));
+    
+    if (r<n2)
+        gama1=gama;
+        gama=0.5*(gama1+gama2);
+    else
+        gama2=gama;
+        gama=0.5*(gama1+gama2);
+    end
+        
+    if ((n2-1)<=r&&r<=(n2+1))
+        gama
+        break
+    end
+end
+t{17,1}=abs(ifft2(fftshift(t{12,1})));
+ee=max(max(t{17,1}));
+ff=min(min(t{17,1}));
+t{18,1}=uint8(255*(t{17,1}-ff)/(ee-ff));
+
+figure(1)
+imshow(t{11,1})
+figure(2)
+imshow(t{18,1})
+figure(3)
+imshow(t{7,1})
